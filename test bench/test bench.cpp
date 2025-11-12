@@ -28,13 +28,16 @@ std::vector<std::vector<std::string>> handDecode(std::vector<int> hand)
 
 int isHandStraight(std::vector<int> hand)
 {
-	int isStraight = 1;
+	std::cout << "RUNNING isHandStraight Function" << "\n";
+
+	int isStraight = 0;
+	int straightCounter = 0;
 
 	sort(hand.begin(), hand.end());
 
 	int lowestCard = hand.at(0); //identify lowest card
 	int nextInterval = lowestCard + (13 - (lowestCard % 13)); //identify next suit interval
-	int prevCard = lowestCard - 1;
+	int prevCard = (lowestCard - 1) % 13;
 
 	std::cout << nextInterval - lowestCard << " >= " << hand.size() << "\n"; // TEST CODE
 
@@ -42,37 +45,55 @@ int isHandStraight(std::vector<int> hand)
 	{
 		for (int i = 0; i < hand.size(); i++) // loop through the hand
 		{
-			std::cout << hand.at(i) - 1 << " ?= " << prevCard << "\n"; // TEST CODE
-			if (hand.at(i) - 1 != prevCard)
-				isStraight = 0;
+			std::cout << (hand.at(i) - 1) % 13 << " ?= " << (prevCard) % 13 << "\n"; // TEST CODE
+
+			if ((hand.at(i) - 1) % 13 == (prevCard) % 13)
+				straightCounter++;
+
+			std::cout << "straight count: " << straightCounter << "\n"; // test code
+
+			if (straightCounter >= 5)
+				isStraight = 1;
+
+			if (hand.at(i) == nextInterval)
+			{
+				straightCounter = 0;
+				nextInterval += 13;
+			}
+
 			prevCard = hand.at(i);
 		}
-	}
-	else
-	{
-		isStraight = 0;
 	}
 	return isStraight; // return 0 if no, 1 if yes
 }
 
 int isHandFlush(std::vector<int> hand)
 {
-	int isFlush = 1;
+	std::cout << "RUNNING isHandFlush Function" << "\n";
+	int isFlush = 0;
+	int clubCounter = 0;
+	int heartCounter = 0;
+	int diamondCounter = 0;
+	int spadeCounter = 0;
 
 	sort(hand.begin(), hand.end());
 	handDecoded = handDecode(hand);
 
-	std::string suitKey = handDecoded.at(0).at(1);
-
-	std::cout << suitKey << ": "; //TEST CODE
-
 	for (int i = 0; i < handDecoded.size(); i++)// loop through handDecoded
 	{
 		std::cout << handDecoded.at(i).at(1) << ", "; //TEST CODE
-		if (handDecoded.at(i).at(1) != suitKey) // check if each element is the same as that of the first, set isFlush to 0 if not
-			isFlush = 0;
+		if (handDecoded.at(i).at(1) == "clubs") // check suit and add to counter
+			clubCounter++;
+		if (handDecoded.at(i).at(1) == "hearts")
+			heartCounter++;
+		if (handDecoded.at(i).at(1) == "diamonds")
+			diamondCounter++;
+		if (handDecoded.at(i).at(1) == "spades")
+			spadeCounter++;
+
+		if (clubCounter >= 5 or heartCounter >= 5 or diamondCounter >= 5 or spadeCounter >= 5)
+			isFlush = 1;
 	}
-	std::cout << "\n"; //TEST CODE
 
 	return isFlush; // return 0 if no, 1 if regular flush, 2 if royal flush
 }
