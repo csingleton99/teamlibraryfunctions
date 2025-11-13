@@ -2,8 +2,8 @@
 // Team 6, Andrew Mayak and Chris Singleton
 //
 
-
 #include <vector>
+#include <set>
 #include <algorithm>
 #include <iostream>
 #include <string>
@@ -12,7 +12,7 @@ const std::vector<std::string> RANKS = { "ace", "2", "3", "4", "5", "6", "7", "8
 const std::vector<std::string> SUITS = { "clubs", "hearts", "diamonds", "spades" };
 std::vector<std::vector<std::string>> handDecoded;
 
-std::vector<std::vector<std::string>> handDecode(std::vector<int> hand)
+static std::vector<std::vector<std::string>> handDecode(std::vector<int> hand)
 {
 	std::vector<std::vector<std::string>> handMatrix;
 
@@ -39,18 +39,12 @@ int isHandStraight(std::vector<int> hand)
 	int nextInterval = lowestCard + (13 - (lowestCard % 13)); //identify next suit interval
 	int prevCard = (lowestCard - 1) % 13;
 
-	std::cout << nextInterval - lowestCard << " >= " << hand.size() << "\n"; // TEST CODE
-
 	if (nextInterval - lowestCard >= hand.size()) // make sure a straight is even possible
 	{
 		for (int i = 0; i < hand.size(); i++) // loop through the hand
 		{
-			std::cout << (hand.at(i) - 1) % 13 << " ?= " << (prevCard) % 13 << "\n"; // TEST CODE
-
 			if ((hand.at(i) - 1) % 13 == (prevCard) % 13)
 				straightCounter++;
-
-			std::cout << "straight count: " << straightCounter << "\n"; // test code
 
 			if (straightCounter >= 5)
 				isStraight = 1;
@@ -81,7 +75,6 @@ int isHandFlush(std::vector<int> hand)
 
 	for (int i = 0; i < handDecoded.size(); i++)// loop through handDecoded
 	{
-		std::cout << handDecoded.at(i).at(1) << ", "; //TEST CODE
 		if (handDecoded.at(i).at(1) == "clubs") // check suit and add to counter
 			clubCounter++;
 		if (handDecoded.at(i).at(1) == "hearts")
@@ -100,10 +93,46 @@ int isHandFlush(std::vector<int> hand)
 
 int handIncludesMultiples(std::vector<int> hand)
 {
-	sort(hand.begin(), hand.end());
+	std::cout << "RUNNING handIncludesMultiples Function" << "\n";
 
-	return 0; // return 0 if no, 1 if two-of-a-kind, 2 if three-of-a-kind, 3 if four-of-a-kind 
+	int isStraight = 0;
+	int currentCounter = 0;
+	int highestCounter = 0;
+	std::set<std::string> rankSet;
+
+	sort(hand.begin(), hand.end());
+	handDecoded = handDecode(hand);
+
+	for (int i = 0; i < handDecoded.size(); i++) //create a set which just tracks the unique ranks in the hand
+		rankSet.insert(handDecoded.at(i).at(0));
+
+	for (std::string rankHere : rankSet) // for every unique rank in the hand...
+	{
+		for (int i = 0; i < handDecoded.size(); i++) // loop through the hand once...
+		{
+			if (rankHere == handDecoded.at(i).at(0)) // and total the occurances of that rank
+				currentCounter++;
+		}
+
+		if (currentCounter > highestCounter) // If the rank you just checked occurs more often than the previous...
+			highestCounter = currentCounter; // Then it becomes the new highest
+
+		currentCounter = 0; //reset counter after each loop
+	}
+
+	if (highestCounter == 1)
+		isStraight = 0;
+	else if (highestCounter == 2)
+		isStraight = 1;
+	else if (highestCounter == 3)
+		isStraight = 2;
+	else if (highestCounter == 4)
+		isStraight = 3;
+
+	return isStraight; // return 0 if no, 1 if two-of-a-kind, 2 if three-of-a-kind, 3 if four-of-a-kind 
 }
+
+
 
 
 
@@ -120,9 +149,9 @@ int main()
 	const std::vector<int> deck = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52};
 
 	const std::vector<int> handone = { 1,2,3,4,5};
-	const std::vector<int> handtwo = { 11,12,13,14,15 };
-	const std::vector<int> handthree = { 1,6,7,13,50 };
-	const std::vector<int> handfour = { 20,30,40,50,52 };
+	const std::vector<int> handtwo = { 1,14,13,17,15 };
+	const std::vector<int> handthree = { 1,14,27,13,50 };
+	const std::vector<int> handfour = { 1,14,27,40,52 };
 
 	//isHandFlush(deck);
 	//std::cout << isHandFlush(deck) << "\n";
@@ -144,6 +173,14 @@ int main()
 
 	std::cout << isHandStraight(handfour) << "\n";
 
+
+	std::cout << handIncludesMultiples(handone) << "\n";
+
+	std::cout << handIncludesMultiples(handtwo) << "\n";
+
+	std::cout << handIncludesMultiples(handthree) << "\n";
+
+	std::cout << handIncludesMultiples(handfour) << "\n";
 
 	/*for (int i = 0; i < 4; i++) // prints out the original contents of the deck
 	{

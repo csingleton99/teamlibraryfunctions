@@ -2,10 +2,10 @@
 // Team 6, Andrew Mayak and Chris Singleton
 //
 
-
 #include "pch.h"
 #include "framework.h"
 #include <vector>
+#include <set>
 #include <algorithm>
 #include <iostream>
 #include <string>
@@ -41,18 +41,12 @@ int isHandStraight(std::vector<int> hand)
 	int nextInterval = lowestCard + (13 - (lowestCard % 13)); //identify next suit interval
 	int prevCard = (lowestCard - 1) % 13 ;
 
-	std::cout << nextInterval - lowestCard << " >= " << hand.size() << "\n"; // TEST CODE
-
 	if (nextInterval - lowestCard >= hand.size()) // make sure a straight is even possible
 	{
 		for (int i = 0; i < hand.size(); i++) // loop through the hand
 		{
-			std::cout << (hand.at(i) - 1) % 13 << " ?= " << (prevCard) % 13 << "\n"; // TEST CODE
-
 			if ((hand.at(i) - 1) % 13 == (prevCard) % 13)
 				straightCounter++;
-
-			std::cout << "straight count: " << straightCounter << "\n"; // test code
 
 			if (straightCounter >= 5)
 				isStraight = 1;
@@ -83,7 +77,6 @@ int isHandFlush(std::vector<int> hand)
 
 	for (int i = 0; i < handDecoded.size(); i++)// loop through handDecoded
 	{
-		std::cout << handDecoded.at(i).at(1) << ", "; //TEST CODE
 		if (handDecoded.at(i).at(1) == "clubs") // check suit and add to counter
 			clubCounter++;
 		if (handDecoded.at(i).at(1) == "hearts")
@@ -104,10 +97,39 @@ int handIncludesMultiples(std::vector<int> hand)
 {
 	std::cout << "RUNNING handIncludesMultiples Function" << "\n";
 
+	int isStraight = 0;
+	int currentCounter = 0;
+	int highestCounter = 0;
+	std::set<std::string> rankSet;
+
 	sort(hand.begin(), hand.end());
+	handDecoded = handDecode(hand);
 
-	// loop through the hand, checking each decoded rank against all others present. Set a flag if the count reaches 2, 3, or 4
-	// ideally find a way to skip the loop if that rank has already appeared, maybe by adding that rank to a list for comparison?
+	for (int i = 0; i < handDecoded.size(); i++) //create a set which just tracks the unique ranks in the hand
+		rankSet.insert(handDecoded.at(i).at(0));
 
-	return 0; // return 0 if no, 1 if two-of-a-kind, 2 if three-of-a-kind, 3 if four-of-a-kind 
+	for (std::string rankHere : rankSet) // for every unique rank in the hand...
+	{
+		for (int i = 0; i < handDecoded.size(); i++) // loop through the hand once...
+		{
+			if (rankHere == handDecoded.at(i).at(0)) // and total the occurances of that rank
+				currentCounter++;
+		}
+
+		if (currentCounter > highestCounter) // If the rank you just checked occurs more often than the previous...
+			highestCounter = currentCounter; // Then it becomes the new highest
+
+		currentCounter = 0; //reset counter after each loop
+	}
+
+	if (highestCounter == 1)
+		isStraight = 0;
+	else if (highestCounter == 2)
+		isStraight = 1;
+	else if (highestCounter == 3)
+		isStraight = 2;
+	else if (highestCounter == 4)
+		isStraight = 3;
+
+	return isStraight; // return 0 if no, 1 if two-of-a-kind, 2 if three-of-a-kind, 3 if four-of-a-kind 
 }
