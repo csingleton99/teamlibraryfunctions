@@ -26,41 +26,6 @@ static std::vector<std::vector<std::string>> handDecode(std::vector<int> hand)
 	return handMatrix;
 }
 
-int isHandStraight(std::vector<int> hand)
-{
-	std::cout << "RUNNING isHandStraight Function" << "\n";
-
-	int isStraight = 0;
-	int straightCounter = 0;
-
-	sort(hand.begin(), hand.end());
-
-	int lowestCard = hand.at(0); //identify lowest card
-	int nextInterval = lowestCard + (13 - (lowestCard % 13)); //identify next suit interval
-	int prevCard = (lowestCard - 1) % 13;
-
-	if (nextInterval - lowestCard >= hand.size()) // make sure a straight is even possible
-	{
-		for (int i = 0; i < hand.size(); i++) // loop through the hand
-		{
-			if ((hand.at(i) - 1) % 13 == (prevCard) % 13)
-				straightCounter++;
-
-			if (straightCounter >= 5)
-				isStraight = 1;
-
-			if (hand.at(i) == nextInterval)
-			{
-				straightCounter = 0;
-				nextInterval += 13;
-			}
-
-			prevCard = hand.at(i);
-		}
-	}
-	return isStraight; // return 0 if no, 1 if yes
-}
-
 int isHandFlush(std::vector<int> hand)
 {
 	std::cout << "RUNNING isHandFlush Function" << "\n";
@@ -89,6 +54,89 @@ int isHandFlush(std::vector<int> hand)
 	}
 
 	return isFlush; // return 0 if no, 1 if regular flush, 2 if royal flush
+}
+
+int isHandStraight(std::vector<int> hand)
+{
+	std::cout << "RUNNING isHandStraight Function" << "\n";
+
+	int isStraight = 0;
+	int straightCounter = 0;
+	std::vector<int> straightHand;
+	std::vector<std::vector<int>> subHands;
+
+	sort(hand.begin(), hand.end());
+
+	int lowestCard = hand.at(0); //identify lowest card
+	int nextInterval = lowestCard + (13 - (lowestCard % 13)) + 1; //identify next suit interval
+	int prevCard = (lowestCard - 1) % 13;
+
+	if (nextInterval - lowestCard >= hand.size()) // make sure a straight is even possible
+	{
+		for (int i = 0; i < hand.size(); i++) // loop through the hand
+		{
+			// if the current card is the rank following the previous...
+			// OR if the previous is a king and the current card is an ace
+
+			std::cout << (hand.at(i) - 1) % 13 << " ?= " << prevCard % 13 << "\n"; // TEST CODE
+
+			if ((hand.at(i) - 1) % 13 == (prevCard) % 13)
+			{
+				straightCounter++;
+				straightHand.push_back(hand.at(i));
+			}
+
+			if (hand.at(i) == nextInterval - 1 and straightCounter == 4)
+			{
+				straightCounter++;
+				nextInterval += 13;
+			}
+			else if (hand.at(i) == nextInterval)
+			{
+				straightCounter = 0;
+				nextInterval += 13;
+			}
+
+			if (straightCounter >= 5) // this hack doesn't work for royal flushes
+				isStraight = 1;		  // because the straightHand gets messed up
+
+			prevCard = hand.at(i);
+
+			std::cout << "current count: " << straightCounter << "\n"; // TEST CODE
+		}
+	}
+
+	if (isStraight == 1)
+	{
+		std::vector<int> subHandCurrent;
+		int countFlag = 0;
+
+		// this block creates ordinated subhands from the straight hand
+		for (int i = 0; i < straightHand.size() - 4; i++)
+		{
+			for (int j = 0 + countFlag; j < 5 + countFlag; j++)
+				subHandCurrent.push_back(straightHand.at(j));
+			countFlag++;
+
+			subHands.push_back(subHandCurrent);
+		}
+
+		// This block checks each ordinated subhand to determine if it is a straight-flush
+		for (std::vector<int> hand : subHands)
+		{
+			if (isHandFlush(hand) == 1)
+				isStraight = 2;
+		}
+	}
+
+	// This block checks if the last element of the highest subhand was an ace
+	if (isStraight == 2)
+	{
+		if ((subHands.back().at(0) % 13) - 1 == 0)
+			isStraight = 3;
+	}
+
+	return isStraight; // return 0 if no, 1 if yes
 }
 
 int handIncludesMultiples(std::vector<int> hand)
@@ -140,6 +188,8 @@ int handIncludesMultiples(std::vector<int> hand)
 
 
 
+
+
 //------------------------------------------------
 
 
@@ -148,9 +198,9 @@ int main()
 	int cardCount = 0;
 	const std::vector<int> deck = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52};
 
-	const std::vector<int> handone = { 1,2,3,4,5};
-	const std::vector<int> handtwo = { 1,14,13,17,15 };
-	const std::vector<int> handthree = { 1,14,27,13,50 };
+	const std::vector<int> handone = { 1,10,11,12,13 };
+	const std::vector<int> handtwo = { 1,15,16,17,18 };
+	const std::vector<int> handthree = { 3,4,5,6,7 };
 	const std::vector<int> handfour = { 1,14,27,40,52 };
 
 	//isHandFlush(deck);
