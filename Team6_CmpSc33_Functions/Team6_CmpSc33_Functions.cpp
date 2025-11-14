@@ -81,8 +81,6 @@ int isHandStraight(std::vector<int> hand)
 			// if the current card is the rank following the previous...
 			// OR if the previous is a king and the current card is an ace
 
-			std::cout << (hand.at(i) - 1) % 13 << " ?= " << prevCard % 13 << "\n"; // TEST CODE
-
 			if ((hand.at(i) - 1) % 13 == (prevCard) % 13)
 			{
 				straightCounter++;
@@ -105,8 +103,6 @@ int isHandStraight(std::vector<int> hand)
 				isStraight = 1;		  // because the straightHand gets messed up
 
 			prevCard = hand.at(i);
-
-			std::cout << "current count: " << straightCounter << "\n"; // TEST CODE
 		}
 	}
 
