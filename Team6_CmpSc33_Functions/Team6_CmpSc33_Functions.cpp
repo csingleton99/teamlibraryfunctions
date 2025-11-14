@@ -91,6 +91,7 @@ int isHandStraight(std::vector<int> hand)
 			if (hand.at(i) == nextInterval - 1 and straightCounter == 4)
 			{
 				straightCounter++;
+				straightHand.push_back(hand.at(i-3));
 				nextInterval += 13;
 			}
 			else if (hand.at(i) == nextInterval)
