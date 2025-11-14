@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <iostream>
 #include <string>
+#include "Team6_CmpSc33_Functions.h"
 
 const std::vector<std::string> RANKS = { "ace", "2", "3", "4", "5", "6", "7", "8", "9" , "10", "jack", "queen", "king" };
 const std::vector<std::string> SUITS = { "clubs", "hearts", "diamonds", "spades" };
