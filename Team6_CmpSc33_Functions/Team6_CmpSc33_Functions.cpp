@@ -30,7 +30,6 @@ static std::vector<std::vector<std::string>> handDecode(std::vector<int> hand)
 
 int isHandFlush(std::vector<int> hand)
 {
-	std::cout << "RUNNING isHandFlush Function" << "\n";
 	int isFlush = 0;
 	int clubCounter = 0;
 	int heartCounter = 0;
@@ -60,8 +59,6 @@ int isHandFlush(std::vector<int> hand)
 
 int isHandStraight(std::vector<int> hand)
 {
-	std::cout << "RUNNING isHandStraight Function" << "\n";
-
 	int isStraight = 0;
 	int straightCounter = 0;
 	std::vector<int> straightHand;
@@ -79,8 +76,6 @@ int isHandStraight(std::vector<int> hand)
 		{
 			// if the current card is the rank following the previous...
 			// OR if the previous is a king and the current card is an ace
-
-			std::cout << (hand.at(i) - 1) % 13 << " ?= " << prevCard % 13 << "\n"; // TEST CODE
 
 			if ((hand.at(i) - 1) % 13 == (prevCard) % 13)
 			{
@@ -103,8 +98,6 @@ int isHandStraight(std::vector<int> hand)
 				isStraight = 1;		  // because the straightHand gets messed up
 
 			prevCard = hand.at(i);
-
-			std::cout << "current count: " << straightCounter << "\n"; // TEST CODE
 		}
 	}
 
@@ -143,8 +136,6 @@ int isHandStraight(std::vector<int> hand)
 
 int handIncludesMultiples(std::vector<int> hand)
 {
-	std::cout << "RUNNING handIncludesMultiples Function" << "\n";
-
 	int isStraight = 0;
 	int currentCounter = 0;
 	int highestCounter = 0;
