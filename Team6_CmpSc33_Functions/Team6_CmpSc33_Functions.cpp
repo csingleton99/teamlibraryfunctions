@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <iostream>
 #include <string>
+#include "Team6_CmpSc33_Functions.h"
 
 const std::vector<std::string> RANKS = { "ace", "2", "3", "4", "5", "6", "7", "8", "9" , "10", "jack", "queen", "king" };
 const std::vector<std::string> SUITS = { "clubs", "hearts", "diamonds", "spades" };
@@ -86,6 +87,7 @@ int isHandStraight(std::vector<int> hand)
 			if (hand.at(i) == nextInterval - 1 and straightCounter == 4)
 			{
 				straightCounter++;
+				straightHand.push_back(hand.at(i-3));
 				nextInterval += 13;
 			}
 			else if (hand.at(i) == nextInterval)
